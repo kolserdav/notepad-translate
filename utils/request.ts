@@ -1,6 +1,14 @@
 import { TRANSLATE_URL } from "./constants";
 import { log } from "./lib";
 
+interface Result {
+  error?: string;
+}
+
+interface TranslateResult extends Result {
+  translatedText?: string;
+}
+
 class Request {
   private async send(
     url: string,
@@ -23,19 +31,25 @@ class Request {
 
     let body: string | undefined = "";
     try {
-      body = body ? JSON.stringify(_body) : undefined;
+      body = _body ? JSON.stringify(_body) : undefined;
     } catch (e) {}
 
     const res = await fetch(url, {
       method,
       body,
       headers,
+    }).catch((e) => {
+      log("error", "Failed request", { e, url, headers, body });
     });
     let data: any = { error: "Message Error" };
+    if (!res) {
+      return data;
+    }
+
     try {
       data = await res.json();
     } catch (e) {
-      log("warn", "Failed request", res);
+      /** */
     }
     return data;
   }
@@ -48,7 +62,7 @@ class Request {
     q: string;
     source: string;
     target: string;
-  }) {
+  }): Promise<TranslateResult> {
     return this.send(`${TRANSLATE_URL}/translate`, {
       method: "POST",
       body: {
@@ -62,7 +76,7 @@ class Request {
   }
 
   public async getLanguages() {
-    return this.send(`${TRANSLATE_URL}/languages1`, {
+    return this.send(`${TRANSLATE_URL}/languages`, {
       method: "GET",
     });
   }
