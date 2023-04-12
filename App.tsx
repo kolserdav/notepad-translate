@@ -2,6 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TextInput } from "react-native";
 import React from "react";
 import { log } from "./utils/lib";
+import { TRANSLATE_URL } from "./utils/constants";
+import request from "./utils/request";
 
 export default function App() {
   const [text, setText] = React.useState<string>();
@@ -19,18 +21,7 @@ export default function App() {
   }, [text]);
 
   const runTranslate = async (q: string) => {
-    const res = await fetch("http://192.168.0.3:5000/translate", {
-      method: "POST",
-      body: JSON.stringify({
-        q,
-        source: "ru",
-        target: "en",
-        format: "text",
-        api_key: "44c748aa-0854-41cb-9b5f-c274f750ea2a",
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const data = (await res.json()) as any;
+    const data = await request.translate({ q, source: "ru", target: "en" });
 
     const d = data.translatedText;
     if (!d) {
@@ -44,6 +35,15 @@ export default function App() {
   const changeText = (e: string) => {
     setText(e);
   };
+
+  const getLanguages = async () => {
+    const data = await request.getLanguages();
+    console.log(data);
+  };
+
+  React.useEffect(() => {
+    getLanguages();
+  }, []);
 
   return (
     <View style={styles.container}>
