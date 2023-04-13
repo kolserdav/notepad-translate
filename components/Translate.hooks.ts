@@ -1,6 +1,13 @@
 import React from "react";
 import Request from "../utils/request";
 import { log } from "../utils/lib";
+import {
+  getLearnLang,
+  getNativeLang,
+  setNativeLang as _setNativeLang,
+  setLearnLang as _setLearnLang,
+} from "../storage/langs";
+import { ServerLanguage } from "../types";
 
 const request = new Request();
 
@@ -9,14 +16,63 @@ export const useTranslate = () => {
   const [text, setText] = React.useState<string>();
   const [translate, setTranslate] = React.useState<string>();
   const [reTranslate, setRetranslate] = React.useState<string>();
-  const [nativeLang, setNativeLang] = React.useState<string>("ru");
-  const [learnLang, setLearnLAng] = React.useState<string>("en");
+  const [nativeLang, setNativeLang] = React.useState<string>();
+  const [learnLang, setLearnLang] = React.useState<string>();
+  const [selecNativeLang, setSelectNativeLang] = React.useState<boolean>(false);
+  const [selecLearnLang, setSelectLearnLang] = React.useState<boolean>(false);
+  const [serverLanguages, setServerLanguages] = React.useState<
+    ServerLanguage[]
+  >([]);
+
+  /**
+   * Set langs
+   */
+  React.useEffect(() => {
+    (async () => {
+      if (!nativeLang) {
+        const n = await getNativeLang();
+        if (n) {
+          setNativeLang(n);
+        } else {
+          setSelectNativeLang(true);
+          return;
+        }
+      }
+
+      const l = await getLearnLang();
+      if (l) {
+        setLearnLang(l);
+      } else {
+        setSelectLearnLang(true);
+      }
+    })();
+  }, [nativeLang]);
+
+  /**
+   * Set native lang
+   */
+  React.useEffect(() => {
+    if (!nativeLang) {
+      return;
+    }
+    _setNativeLang(nativeLang);
+  }, [nativeLang]);
+
+  /**
+   * Set learn lang
+   */
+  React.useEffect(() => {
+    if (!learnLang) {
+      return;
+    }
+    _setLearnLang(learnLang);
+  }, [learnLang]);
 
   /**
    * Tranlate
    */
   React.useEffect(() => {
-    if (!text) {
+    if (!text || !learnLang || !nativeLang) {
       return;
     }
     const runTranslate = async (q: string) => {
@@ -47,7 +103,7 @@ export const useTranslate = () => {
 
   const getLanguages = async () => {
     const data = await request.getLanguages();
-    // console.log(data);
+    setServerLanguages(data);
   };
 
   /**
@@ -61,7 +117,7 @@ export const useTranslate = () => {
    * Retranslate
    */
   React.useEffect(() => {
-    if (!translate) {
+    if (!translate || !nativeLang || !learnLang) {
       return;
     }
     const runRetranslate = async (q: string) => {
@@ -82,5 +138,18 @@ export const useTranslate = () => {
     runRetranslate(translate);
   }, [translate, learnLang, nativeLang]);
 
-  return { translate, reTranslate, changeText };
+  return {
+    translate,
+    reTranslate,
+    changeText,
+    selecNativeLang,
+    serverLanguages,
+    setNativeLang,
+    nativeLang,
+    setSelectNativeLang,
+    setSelectLearnLang,
+    selecLearnLang,
+    setLearnLang,
+    learnLang,
+  };
 };

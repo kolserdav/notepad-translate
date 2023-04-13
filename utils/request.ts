@@ -1,3 +1,4 @@
+import { ServerLanguage } from "../types";
 import { API_URL, TRANSLATE_URL } from "./constants";
 import { log } from "./lib";
 
@@ -79,7 +80,7 @@ class Request {
     });
   }
 
-  public async getLanguages() {
+  public async getLanguages(): Promise<ServerLanguage[]> {
     return this.send(`${TRANSLATE_URL}/languages`, {
       method: "GET",
     });
