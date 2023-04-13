@@ -5,7 +5,7 @@
   "scripts": {
     "start": "expo start --offline",
     "android": "expo start --android",
-    "build": "react-native bundle --platform android --dev false --entry-file App.tsx --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "build": "eas build --platform android",
     "ios": "expo start --ios",
     "web": "expo start --web"
   },
