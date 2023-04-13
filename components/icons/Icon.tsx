@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import React from "react";
+import Svg, { Path } from "react-native-svg";
 
 export interface IconProps {
   children: string;
@@ -8,9 +9,8 @@ export interface IconProps {
 
 export default function Icon({ children, color, size }: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${size} ${size}`}>
-      <title>pencil</title>
-      <path fill={color} d={children} />
-    </svg>
+    <Svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`}>
+      <Path d={children} fill={color} />
+    </Svg>
   );
 }

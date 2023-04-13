@@ -1,4 +1,4 @@
-import { TRANSLATE_URL } from "./constants";
+import { API_URL, TRANSLATE_URL } from "./constants";
 import { log } from "./lib";
 
 interface Result {
@@ -10,6 +10,7 @@ interface TranslateResult extends Result {
 }
 
 class Request {
+  // eslint-disable-next-line class-methods-use-this
   private async send(
     url: string,
     {
@@ -18,6 +19,7 @@ class Request {
       headers: _headers,
     }: {
       method: "GET" | "POST" | "PUT" | "DELETE";
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       body?: any;
       headers?: Record<string, string>;
     }
@@ -32,7 +34,9 @@ class Request {
     let body: string | undefined = "";
     try {
       body = _body ? JSON.stringify(_body) : undefined;
-    } catch (e) {}
+    } catch (e) {
+      /** */
+    }
 
     const res = await fetch(url, {
       method,
@@ -80,6 +84,12 @@ class Request {
       method: "GET",
     });
   }
+
+  public async getLocale(locale: string) {
+    return this.send(`${API_URL}/locale?locale=${locale}`, {
+      method: "GET",
+    });
+  }
 }
 
-export default new Request();
+export default Request;

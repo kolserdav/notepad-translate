@@ -1,3 +1,4 @@
+import React from "react";
 import Icon, { IconProps } from "./Icon";
 
 export default function PencilIcon(props: Omit<IconProps, "children">) {

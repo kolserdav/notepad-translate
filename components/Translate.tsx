@@ -1,8 +1,12 @@
 import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import React from "react";
+import { ParamListBase } from "@react-navigation/native";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useTranslate } from "./Translate.hooks";
 
-export default function Translate({ navigation }) {
+export default function Translate({
+  navigation,
+}: BottomTabScreenProps<ParamListBase>) {
   const { changeText, translate, reTranslate } = useTranslate();
 
   return (
@@ -10,10 +14,6 @@ export default function Translate({ navigation }) {
       <TextInput onChangeText={changeText} style={styles.input} />
       <Text style={styles.text}>{translate}</Text>
       <Text style={styles.reTranslate}>{reTranslate}</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate("Profile")}
-      />
     </View>
   );
 }
