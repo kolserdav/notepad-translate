@@ -7,24 +7,16 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 
 import { ParamListBase } from "@react-navigation/native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { useTranslate } from "./Translate.hooks";
-import { Locale } from "../types";
-import { Theme } from "../Theme";
+import Context from "../App.context";
 
-interface TranslateProps extends BottomTabScreenProps<ParamListBase> {
-  locale: Locale;
-  theme: Theme;
-}
+export default function Translate(_: BottomTabScreenProps<ParamListBase>) {
+  const { theme, locale } = useContext(Context);
 
-export default function Translate({
-  navigation,
-  locale,
-  theme,
-}: TranslateProps) {
   const {
     changeText,
     translate,
@@ -56,13 +48,16 @@ export default function Translate({
         style={{
           width: "100%",
           borderWidth: 1,
-          borderColor: theme.text,
+          borderColor: theme.active,
+          color: theme.text,
           padding: 8,
           fontSize: 16,
         }}
       />
-      <Text style={styles.text}>{translate}</Text>
-      <Text style={styles.reTranslate}>{reTranslate}</Text>
+      <Text style={[styles.text, { color: theme.text }]}>{translate}</Text>
+      <Text style={[styles.reTranslate, { color: theme.text }]}>
+        {reTranslate}
+      </Text>
       <Modal
         style={styles.modalContainer}
         animationType="slide"
@@ -86,7 +81,9 @@ export default function Translate({
                   }, 500);
                 }}
               >
-                <Text style={styles.langText}>{item.name}</Text>
+                <Text style={[styles.langText, { color: theme.text }]}>
+                  {item.name}
+                </Text>
               </Pressable>
             ))}
           </ScrollView>

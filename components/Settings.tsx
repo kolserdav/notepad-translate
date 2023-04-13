@@ -1,19 +1,17 @@
-import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { ParamListBase } from "@react-navigation/native";
-import { Locale } from "../types";
-import { useTheme } from "./Settings.hooks";
-import storeTheme, { changeTheme } from "../store/theme";
-import { Theme } from "../Theme";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useSettings } from "./Settings.hooks";
+import Context from "../App.context";
+import ChangeTheme from "./ChangeTheme";
 
-interface SettingsProps extends BottomTabScreenProps<ParamListBase> {
-  locale: Locale;
-  theme: Theme;
-}
+const Stack = createNativeStackNavigator();
 
-function Settings({ locale, theme }: SettingsProps) {
-  useTheme();
+function Settings(_: BottomTabScreenProps<ParamListBase>) {
+  const { theme, locale } = useContext(Context);
+  useSettings();
   return (
     <View
       style={{
@@ -21,9 +19,21 @@ function Settings({ locale, theme }: SettingsProps) {
         height: "100%",
       }}
     >
-      <Text style={[{ color: theme.text }, styles.item]}>
-        {locale.settings}
-      </Text>
+      <View
+        style={{
+          borderColor: theme.text,
+          borderWidth: 1,
+          display: "flex",
+          flexWrap: "wrap",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Text style={[{ color: theme.text }, styles.item]}>
+          {locale.change_theme}
+        </Text>
+        <ChangeTheme paper={theme.paper} />
+      </View>
     </View>
   );
 }

@@ -9,4 +9,5 @@ export interface Locale {
   translate: string;
   select_native: string;
   select_learn: string;
+  change_theme: string;
 }
