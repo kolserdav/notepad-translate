@@ -36,6 +36,9 @@ function App() {
           options={{
             title: locale?.translate,
             tabBarIcon: PencilIcon,
+            tabBarActiveBackgroundColor: theme.active,
+            tabBarInactiveBackgroundColor: theme.inactive,
+            headerStyle: { backgroundColor: theme.active },
           }}
         />
         <Tab.Screen
@@ -43,13 +46,16 @@ function App() {
           component={
             locale
               ? (props: BottomTabScreenProps<ParamListBase>) => (
-                  <Settings {...props} locale={locale} />
+                  <Settings {...props} locale={locale} theme={theme} />
                 )
               : Loading
           }
           options={{
             title: locale?.settings,
             tabBarIcon: SettingsIcon,
+            tabBarActiveBackgroundColor: theme.active,
+            tabBarInactiveBackgroundColor: theme.inactive,
+            headerStyle: { backgroundColor: theme.active },
           }}
         />
       </Tab.Navigator>

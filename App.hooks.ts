@@ -5,6 +5,7 @@ import { Locale } from "./types";
 import { DEFAULT_THEME } from "./utils/constants";
 import { getTheme, setTheme as _setTheme } from "./storage/theme";
 import { themes } from "./Theme";
+import storeTheme from "./store/theme";
 
 const request = new Request();
 
@@ -24,7 +25,8 @@ export const useLang = () => {
 };
 
 export const useTheme = () => {
-  const [theme, setTheme] = React.useState<typeof DEFAULT_THEME>(DEFAULT_THEME);
+  const [themeValue, setThemeValue] =
+    React.useState<typeof DEFAULT_THEME>(DEFAULT_THEME);
 
   /**
    * Set theme after load
@@ -33,7 +35,7 @@ export const useTheme = () => {
     (async () => {
       const t = await getTheme();
       if (t) {
-        setTheme(t);
+        setThemeValue(t);
       }
     })();
   }, []);
@@ -42,8 +44,21 @@ export const useTheme = () => {
    * Change theme
    */
   React.useEffect(() => {
-    _setTheme(theme);
-  }, [theme]);
+    _setTheme(themeValue);
+  }, [themeValue]);
 
-  return { theme: themes[theme], setTheme };
+  /**
+   * Listen change theme
+   */
+  React.useEffect(() => {
+    const cleanSubs = storeTheme.subscribe(() => {
+      const { theme: _theme } = storeTheme.getState();
+      setThemeValue(_theme);
+    });
+    return () => {
+      cleanSubs();
+    };
+  }, []);
+
+  return { theme: themes[themeValue] };
 };
